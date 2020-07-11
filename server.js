@@ -1,33 +1,23 @@
 const express = require("express");
-const path = require("path");
-const fs = require("fs");
+// const path = require("path");
+// const router = express.Router();
+// const fs = require("fs");
+// const DB = require("./db/db.js")
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
-const notesArray = [];
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
 app.use(express.static(__dirname + '/public'));
 
-app.get("/", function (req, res) {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
-});
-app.get("/notes", function (req, res) {
-    res.sendFile(path.join(__dirname, 'public/notes.html'));
-});
-app.get("/api/notes", function(req, res){
-    res.json(notesArray)
-})
+const htmlRoutes = require('./controllers/htmlroutes');
+app.use(htmlRoutes);
 
-app.post("/api/notes", function(req, res) {
-    var savedNote = req.body;
-    console.log(savedNote);
-    notesArray.push(savedNote);
-})
-
+const apiRoutes = require('./controllers/api');
+app.use(apiRoutes);
 
 app.listen(PORT, function () {
     console.log("App listening on PORT " + PORT);
