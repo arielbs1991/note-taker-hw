@@ -6,7 +6,8 @@ const notesData = "./db/db.json";
 
 const readFileAsync = util.promisify(fs.readFile);
 // const writeFileAsync = util.promisify(fs.writeFile);
-const appendFileAsync = util.promisify(fs.appendFile);
+const writeFileAsync = util.promisify(fs.writeFile);
+
 
 // class DB {
 //     async writeNotes(notesArray) {
@@ -26,17 +27,16 @@ const appendFileAsync = util.promisify(fs.appendFile);
 //     }
 // }
 
-//Cody's help code
-//not writing to the json file :/
 class DB {
-    async writeNotes(notesArr, currentNotes) {
+    async writeNotes(newNote, currentNotes) {
         try {
-            //we need to clear the db.json file before rewriting to it
-            // notesData.empty();
-            const {title, text} = notesArr;
-            const newNote = {title, text};
-            const combineNotes = [newNote, ...currentNotes];
-            await appendFileAsync(notesData, JSON.stringify(combineNotes))
+            let note = { title: newNote.title,
+                text: newNote.text,
+                id: Date.now()}
+            //does newNote need to also be notesArr because of destructuring?
+            // const newNote = {title, text, id};
+            const combineNotes = [note, ...currentNotes];
+            await writeFileAsync(notesData, JSON.stringify(combineNotes))
         } catch (e) {
             console.log("something went wrong while writing notesData", e);
         }
@@ -49,6 +49,9 @@ class DB {
             console.log("something went wrong while reading notesData", e)
         }
     }
+    // async deleteNote() {
+        
+    // }
 }
 
 module.exports = new DB();
