@@ -1,13 +1,7 @@
 const express = require("express");
-// const path = require("path");
-// const router = express.Router();
-// const fs = require("fs");
-// const DB = require("./db/db.js")
 
 const app = express();
 const PORT = process.env.PORT || 8080;
-
-
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

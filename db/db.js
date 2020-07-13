@@ -1,20 +1,20 @@
 const util = require("util");
 const fs = require("fs");
 
-
 const notesData = "./db/db.json";
 
 const readFileAsync = util.promisify(fs.readFile);
-// const writeFileAsync = util.promisify(fs.writeFile);
 const writeFileAsync = util.promisify(fs.writeFile);
-const id = Date.now();
 
 class DB {
-    async writeNotes(notesArr, currentNotes) {
+    async writeNotes(newNote, currentNotes) {
         try {
-            const {title, text} = notesArr;
-            const newNote = {title, text, id};
-            const combineNotes = [newNote, ...currentNotes];
+            let note = {
+                title: newNote.title,
+                text: newNote.text,
+                id: Date.now()
+            };
+            const combineNotes = [note, ...currentNotes];
             await writeFileAsync(notesData, JSON.stringify(combineNotes))
         } catch (e) {
             console.log("something went wrong while writing notesData", e);
@@ -22,16 +22,22 @@ class DB {
     }
     async readNotes() {
         const notesRaw = await readFileAsync(notesData, "utf8");
-        try{
-        return notesRaw ? JSON.parse(notesRaw) : [];
+        try {
+            return notesRaw ? JSON.parse(notesRaw) : [];
         } catch (e) {
             console.log("something went wrong while reading notesData", e)
         }
     }
-    // async deleteNote() {
-        //remove from this file, and call within the api file.
-        //something like the filterednotes function, followed by await writefileasync to rewrite updated notes array
-    // }
+    async deleteNote(uniqueId) {
+        try {
+            let notes = await readFileAsync(notesData, "utf8");
+            let notesParsed = JSON.parse(notes);
+            let filteredNotes = await notesParsed.filter(note => note.id !== uniqueId);
+            await writeFileAsync(notesData, JSON.stringify(filteredNotes));
+        } catch (e) {
+            console.log("something went wrong while deleting from notesData")
+        }
+    }
 }
 
 module.exports = new DB();
