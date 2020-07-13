@@ -35,7 +35,7 @@ class DB {
             let filteredNotes = await notesParsed.filter(note => note.id !== uniqueId);
             await writeFileAsync(notesData, JSON.stringify(filteredNotes));
         } catch (e) {
-            console.log("something went wrong while deleting from notesData")
+            console.log("something went wrong while deleting from notesData", e)
         }
     }
 }
